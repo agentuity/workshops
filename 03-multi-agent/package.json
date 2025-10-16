@@ -1,0 +1,36 @@
+{
+  "name": "03-multi-agent",
+  "description": "Workshop demo teaching multi-agent orchestration and the LLM-as-a-judge pattern.",
+  "version": "0.0.1",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "agentuity build",
+    "dev": "agentuity dev",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "prestart": "agentuity bundle",
+    "start": "bun run .agentuity/index.js"
+  },
+  "keywords": [
+    "agentuity",
+    "agent",
+    "ai",
+    "ai agent",
+    "bun"
+  ],
+  "private": true,
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.6",
+    "@types/bun": "^1.3.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@agentuity/sdk": "^0.0.156",
+    "@ai-sdk/openai": "^2.0.52",
+    "ai": "^5.0.73"
+  },
+  "module": "index.ts"
+}

@@ -1,3 +1,13 @@
+<div align="center">
+    <img src="https://raw.githubusercontent.com/agentuity/cli/refs/heads/main/.github/Agentuity.png" alt="Agentuity" width="100"/> <br/>
+    <strong>Build Agents, Not Infrastructure</strong> <br/>
+    <br/>
+        <a target="_blank" href="https://app.agentuity.com/deploy" alt="Agentuity">
+            <img src="https://app.agentuity.com/img/deploy.svg" />
+        </a>
+    <br />
+</div>
+
 # Demo 3: Multi-Agent Orchestration and AI Gateway
 
 **Time:** 40-50 minutes
@@ -9,6 +19,8 @@ This demo teaches multi-agent orchestration, AI Gateway integration, structured 
 ## What You'll Build
 
 A multi-agent story competition where an orchestrator coordinates between a writer agent (using AI Gateway to run multiple models) and a judge agent (using Zod validation for structured evaluation).
+
+**Note:** The judge agent will be created during the workshop to demonstrate the complete flow. The orchestrator and writer agents are included as starting points.
 
 ## Architecture
 
@@ -32,25 +44,17 @@ Orchestrator (you build this)
 - **LLM as a Judge** - Use AI to evaluate AI outputs with structured feedback
 - **Iterative Refinement** - Build improvement loops with targeted feedback
 
-## Workshop Flow
+## Agentuity AI Gateway
 
-1. **Review Supporting Agents** - Understand Writer and Judge implementations
-2. **Get User Prompt** - Parse incoming story topic
-3. **Generate Stories** - Call Writer agent for competing stories
-4. **Judge Competition** - Call Judge agent to pick winner with feedback
-5. **Refine Winner** - Call Writer agent again to improve
-6. **Return Report** - Format complete competition results
-
-## Why AI Gateway?
+The AI Gateway is a key platform feature that simplifies working with multiple AI models:
 
 - No API key management per model
 - Easy comparison of model outputs
 - Automatic usage and cost tracking
-- Performance optimization with `Promise.all`
 
-## Why Zod Validation?
+## Zod Validation
 
-Guarantees type-safe, structured responses:
+Ensures type-safe, structured responses from LLMs:
 
 ```typescript
 const JudgmentSchema = z.object({
@@ -61,27 +65,65 @@ const JudgmentSchema = z.object({
 });
 ```
 
-No string parsing needed—programmatic decision-making with confidence.
+This eliminates manual string parsing and enables reliable programmatic decision-making.
 
-## Testing
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- **Bun**: Version 1.2.4 or higher
+- **Agentuity CLI**: Authenticated with `agentuity login`
+
+## Getting Started
+
+### Development Mode
+
+Run your project in development mode:
+
+```bash
+agentuity dev
+```
+
+This will start your project and open a browser window connecting your agent to the Agentuity Console in DevMode, allowing you to test and debug in real-time.
+
+### Testing
 
 Try different story prompts:
 
 ```
 "A detective who solves mysteries using AI"
 "A space explorer discovers a planet where music is the universal language"
-"Time"
 ```
 
 Use DevMode to filter logs by agent, see data flow, inspect Zod-validated structures, and compare original vs refined stories.
 
-## Real-World Applications
+## Deployment
 
-- **Content Creation** - Draft generation, evaluation, refinement
-- **Code Review** - Multiple solutions, best practices evaluation, optimization
-- **Document Processing** - Data extraction, validation, error correction
-- **Quality Assurance** - Test case generation, coverage evaluation
-- **Design Systems** - Mockup generation, structured evaluation, refinement
+When you're ready to deploy your agent to the Agentuity Cloud:
+
+```bash
+agentuity deploy
+```
+
+This command will bundle your agent and deploy it to the cloud, making it accessible via the Agentuity platform.
+
+## Project Structure
+
+```
+03-multi-agent/
+├── src/
+│   └── agents/
+│       ├── orchestrator/
+│       │   └── index.ts      # Main orchestrator agent
+│       ├── writer/
+│       │   └── index.ts      # AI Gateway writer agent
+│       └── judge/
+│           └── index.ts      # Zod-validated judge agent (created during workshop)
+├── node_modules/             # Dependencies
+├── package.json              # Project dependencies and scripts
+├── agentuity.yaml            # Agentuity project configuration
+└── tsconfig.json             # TypeScript configuration
+```
 
 ## Agent Communication Pattern
 
@@ -91,9 +133,44 @@ const result = await agent.run({ data: 'input or JSON.stringify(object)' });
 const output = await result.data.text(); // or .json()
 ```
 
+## Configuration
+
+Your project configuration is stored in `agentuity.yaml`. This file defines your agents, development settings, and deployment configuration.
+
+## Advanced Usage
+
+### Environment Variables
+
+You can set environment variables for your project:
+
+```bash
+agentuity env set KEY VALUE
+```
+
+### Secrets Management
+
+For sensitive information, use secrets:
+
+```bash
+agentuity env set --secret KEY VALUE
+```
+
 ## Resources
 
 - [JavaScript API Reference](https://agentuity.dev/SDKs/javascript/api-reference)
 - [Agent Communication Guide](https://agentuity.dev/Guides/agent-communication)
 - [Zod Documentation](https://zod.dev)
 - [Agentuity Examples](https://agentuity.dev/Examples)
+- [Agentuity Documentation](https://agentuity.dev/SDKs/javascript)
+
+## Troubleshooting
+
+If you encounter any issues:
+
+1. Check the [documentation](https://agentuity.dev/SDKs/javascript)
+2. Join our [Discord community](https://discord.gg/agentuity) for support
+3. Contact the Agentuity support team
+
+## License
+
+This project is licensed under the terms specified in the LICENSE file.
