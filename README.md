@@ -28,11 +28,11 @@ Explore all three Agentuity storage types through a practical documentation Q&A 
 
 ### 03-multi-agent (40-50 minutes)
 
-Master multi-agent orchestration, AI Gateway integration, and structured output validation through a story competition system where multiple AI models compete and iteratively improve.
+Master multi-agent orchestration, AI Gateway integration, and structured output validation through a story competition system where multiple AI models compete and receive structured evaluation.
 
-**What you'll build:** A multi-agent story competition with evaluation and refinement
+**What you'll build:** A multi-agent story competition with structured evaluation
 
-**Key topics:** Agent communication, AI Gateway, Zod validation, LLM-as-a-judge pattern, orchestration and refinement loops
+**Key topics:** Agent communication, AI Gateway, Zod validation, LLM-as-a-judge pattern, structured output orchestration
 
 [View Demo 3 Details →](./03-multi-agent/README.md)
 

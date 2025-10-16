@@ -14,7 +14,7 @@
 
 ## Overview
 
-This demo teaches multi-agent orchestration, AI Gateway integration, structured output validation, and the "LLM as a judge" pattern through a story competition system. Two AI models compete to write stories, a judge evaluates them, and the winning story is refined to excellence.
+This demo teaches multi-agent orchestration, AI Gateway integration, structured output validation, and the "LLM as a judge" pattern through a story competition system. Two AI models compete to write stories, and a judge evaluates them with structured feedback.
 
 ## What You'll Build
 
@@ -31,9 +31,7 @@ Orchestrator (you build this)
     |
     +---> Judge Agent: Pick winner + provide structured feedback (Zod)
     |
-    +---> Writer Agent: Refine winner based on feedback
-    |
-    +---> Return final refined story with competition report
+    +---> Return competition report with both stories and judge's analysis
 ```
 
 ## Key Concepts
@@ -42,7 +40,6 @@ Orchestrator (you build this)
 - **AI Gateway** - Run multiple AI models (OpenAI, Google) in a single agent
 - **Zod Validation** - Ensure structured, type-safe LLM outputs
 - **LLM as a Judge** - Use AI to evaluate AI outputs with structured feedback
-- **Iterative Refinement** - Build improvement loops with targeted feedback
 
 ## Agentuity AI Gateway
 
@@ -95,7 +92,7 @@ Try different story prompts:
 "A space explorer discovers a planet where music is the universal language"
 ```
 
-Use DevMode to filter logs by agent, see data flow, inspect Zod-validated structures, and compare original vs refined stories.
+Use DevMode to filter logs by agent, see data flow, inspect Zod-validated structures, and view the competition results with judge's analysis.
 
 ## Deployment
 
