@@ -37,11 +37,13 @@ export const welcome = () => {
 };
 
 // Document chunking helper - Splits llms.txt into 5 logical sections for vector storage
+// Why chunk? Smaller sections = better semantic search accuracy
+// Each section gets its own embeddings, making it easier to find specific topics
 function chunkDocument(textContent: string): {
   sections: string[];
   sectionTitles: string[];
 } {
-  // Find the exact positions of the main ## headers
+  // Find the section boundaries by looking for markdown headers
   let featuresIndex = textContent.indexOf('## Product Features');
   if (featuresIndex === -1) {
     featuresIndex = textContent.indexOf('## Features');
@@ -76,59 +78,41 @@ export default async function Agent(
   ctx: AgentContext
 ) {
   try {
-    // TODO: Get user input from request
-    // Hint: Use req.data.text() to get the query
-    const userInput = '';
+    const userInput = await req.data.text();
 
-    // TODO: Check if docs have been indexed yet
-    // Hint: Use ctx.kv.get() to check for 'docs-indexed' key
-    const hasIndexedDocs = { exists: false, data: {} as any };
+    const hasIndexedDocs = await ctx.kv.get(KV_STORAGE_NAME, 'docs-indexed');
 
-    if (!hasIndexedDocs || !hasIndexedDocs.exists) {
+    if (!hasIndexedDocs.exists) {
       /* SECTION 1: Fetch Documentation */
       ctx.logger.info(
         'First run detected - fetching and indexing documentation'
       );
 
-      // TODO: Fetch the llms.txt file
-      // Hint: Use fetch() with the URL 'https://agentuity.com/llms.txt'
-      const response = { text: async () => '' } as any;
-
-      // TODO: Get text content from the response
-      // Hint: Use .text() method on the fetch response
-      const textContent = '';
+      const response = await fetch('https://agentuity.com/llms.txt');
+      const textContent = await response.text();
 
       /* SECTION 2: Object Storage - Store Raw File */
 
-      // TODO: Generate a unique key for the file
-      // Hint: Include timestamp to prevent collisions
-      const key = '';
+      const key = `llms-${Date.now()}.txt`;
 
       // TODO: Store the file in object storage
       // Hint: Use ctx.objectstore.put() with bucket, key, and text content
 
       ctx.logger.info(`Stored file in Object Storage: ${key}`);
 
-      // TODO: Create a public URL for the stored file
-      // Hint: Use ctx.objectstore.createPublicURL() with bucket and key
-      const publicUrl = '';
-
-      // TODO: Log the public URL
-      // Hint: Include expiry information in the log message
-      ctx.logger.info(`Public URL: ${publicUrl}`);
+      const publicUrl = await ctx.objectstore.createPublicURL(
+        OBJECT_STORAGE_BUCKET,
+        key
+      );
+      ctx.logger.info(`Public URL created (1hr expiry): ${publicUrl}`);
 
       /* SECTION 3: Vector Storage - Index for Search */
 
-      // TODO: Use chunkDocument helper to split the text
-      // Hint: Returns { sections, sectionTitles }
-      const sections: string[] = [];
-      const sectionTitles: string[] = [];
-
+      const { sections, sectionTitles } = chunkDocument(textContent);
       const vectorIds: string[] = [];
 
       ctx.logger.info(`Indexing ${sections.length} sections in vector storage`);
 
-      // TODO: Loop through each section
       for (let i = 0; i < sections.length; i++) {
         const sectionContent = sections[i];
         const sectionTitle = sectionTitles[i];
@@ -138,17 +122,19 @@ export default async function Agent(
           continue;
         }
 
-        // TODO: Prepare vector upsert parameters
-        // Hint: Need { key, document, metadata } structure
-        // Hint: Store full content in metadata.content for AI context later
         const vectorParams = {
-          key: '',
-          document: '',
+          key: `${key}-section-${i}`, // Unique ID for this vector
+          document: sectionContent, // Text gets converted to embeddings for semantic search
           metadata: {
-            source: '',
-            sectionIndex: 0,
-            sectionTitle: '',
-            content: '',
+            // Extra data stored with the vector
+            source: key,
+            sectionIndex: i,
+            sectionTitle: sectionTitle,
+            // IMPORTANT: Must store the full text here!
+            // When we search later, results only return: id, key, metadata, similarity.
+            // The original 'document' text is NOT included in search results.
+            // So we store it in metadata to use as context for the LLM.
+            content: sectionContent,
           },
         };
 
@@ -157,7 +143,8 @@ export default async function Agent(
         );
 
         // TODO: Upsert to vector storage
-        // Hint: Use ctx.vector.upsert() and collect returned IDs
+        // Hint: Use ctx.vector.upsert() with VECTOR_STORAGE_NAME and vectorParams
+        // Hint: Returns array of IDs - push them to vectorIds
         const ids: string[] = [];
         vectorIds.push(...ids);
       }
@@ -174,6 +161,11 @@ export default async function Agent(
     ctx.logger.info(`Searching for: ${userInput}`);
 
     // Search vector storage with the user's query
+    // Parameters:
+    //  - query: what to search for (as text)
+    //  - limit: max results to return
+    //  - similarity: threshold (0.0-1.0, where 1.0 is exact match)
+    // Returns array of results with metadata and similarity scores
     const searchResults = await ctx.vector.search(VECTOR_STORAGE_NAME, {
       query: userInput,
       limit: 3,
@@ -185,6 +177,7 @@ export default async function Agent(
     /* SECTION 5: KV Storage - Track Query History */
 
     // TODO: Get existing query history from KV storage
+    // Hint: Use ctx.kv.get() with KV_STORAGE_NAME and 'query-history' key
     const existingQueries = { exists: false, data: {} as any };
 
     const queryHistory = existingQueries.exists
@@ -210,22 +203,27 @@ export default async function Agent(
 
     // Build context from top search results
     const context = searchResults
-    .slice(0, 2)
-    .map((result) => result.metadata?.content || '')
-    .filter((content) => content)
-    .join('\n\n');
+      .slice(0, 2) // Take top 2 most relevant results (out of 3 returned)
+      .map((result) => result.metadata?.content || '') // Extract the full text from metadata
+      .filter((content) => content) // Remove any empty results
+      .join('\n\n'); // Combine into a single context string
 
-    // TODO: Stream AI answer using the context
-    // Hint: Use streamText() with model and prompt
-    // Hint: Include the context and user's question in the prompt
-    // Hint: const result = await streamText({...})
-    const result = { textStream: '' as any };
+    const result = await streamText({
+      model: openai('gpt-5-nano'),
+      prompt: `Answer this question about Agentuity based on the documentation provided.
+
+Documentation context:
+${context || 'No relevant documentation found.'}
+
+Question: ${userInput}
+
+Provide a helpful, concise answer in 2-3 sentences. If no context is available, politely indicate that.`,
+    });
 
     ctx.logger.info('Streaming AI answer');
 
-    // TODO: Return the streaming response
-    // Hint: Use resp.stream() with result.textStream and content type 'text/plain'
-    return resp.text('TODO: Replace with streaming response');
+    // Stream the response back to the user as it's generated (instead of waiting for the full response)
+    return resp.stream(result.textStream, 'text/plain');
   } catch (error) {
     ctx.logger.error('Error running agent:', error);
     return resp.json({
