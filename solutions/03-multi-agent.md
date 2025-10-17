@@ -177,10 +177,10 @@ export default async function Agent(
 
   // Return both stories as markdown with clear headers
   return resp.markdown(
-    '### OpenAI (GPT-5 Nano)\\n\\n' +
+    '### OpenAI (GPT-5 Nano)\n\n' +
       resultOpenAI.text +
-      '\\n\\n---\\n\\n' +
-      '### Google (Gemini 2.0 Flash)\\n\\n' +
+      '\n\n---\n\n' +
+      '### Google (Gemini 2.0 Flash)\n\n' +
       resultGoogle.text
   );
 }
