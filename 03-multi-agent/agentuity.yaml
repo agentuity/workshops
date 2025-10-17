@@ -82,3 +82,6 @@ agents:
   - id: agent_ea6509f36c1ee6ac72673a3b7807ac75
     name: writer
     description: Generates and refines stories using the AI Gateway
+  - id: agent_2fd43a78c9697eff8b707d364151e6e2
+    name: judge
+    description: Evaluates stories with Zod-validated structured feedback

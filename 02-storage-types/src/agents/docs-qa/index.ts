@@ -173,26 +173,25 @@ export default async function Agent(
     /* SECTION 4: Vector Search */
     ctx.logger.info(`Searching for: ${userInput}`);
 
-    // TODO: Search vector storage with the user's query
-    // Hint: Use ctx.vector.search() with query, limit, and similarity threshold
-    // Hint: Try limit: 3, similarity: 0.5
-    const searchResults: any[] = [];
+    // Search vector storage with the user's query
+    const searchResults = await ctx.vector.search(VECTOR_STORAGE_NAME, {
+      query: userInput,
+      limit: 3,
+      similarity: 0.5,
+    });
 
     ctx.logger.info(`Found ${searchResults.length} results`);
 
     /* SECTION 5: KV Storage - Track Query History */
 
     // TODO: Get existing query history from KV storage
-    // Hint: Use ctx.kv.get() with key 'query-history'
-    const existingQueries = {
-      exists: false,
-      data: { json: async () => [] } as any,
-    };
+    const existingQueries = { exists: false, data: {} as any };
 
-    // TODO: Parse existing history or create empty array
-    // Hint: Check if existingQueries.exists, then use .data.json() as QueryHistoryEntry[]
-    const queryHistory: QueryHistoryEntry[] = [];
+    const queryHistory = existingQueries.exists
+      ? ((await existingQueries.data.json()) as QueryHistoryEntry[]) // Parse existing history
+      : []; // Start with empty array (if no query history exists)
 
+    // Add the new query to the history
     queryHistory.push({
       query: userInput,
       timestamp: new Date().toLocaleTimeString(),
@@ -209,10 +208,12 @@ export default async function Agent(
 
     /* SECTION 6: AI Generation */
 
-    // TODO: Build context from top search results
-    // Hint: Use .slice() to get top 2 results
-    // Hint: Extract metadata.content from each result and join with '\n\n'
-    const context = '';
+    // Build context from top search results
+    const context = searchResults
+    .slice(0, 2)
+    .map((result) => result.metadata?.content || '')
+    .filter((content) => content)
+    .join('\n\n');
 
     // TODO: Stream AI answer using the context
     // Hint: Use streamText() with model and prompt

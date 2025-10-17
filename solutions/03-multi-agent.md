@@ -143,7 +143,7 @@ import type { AgentContext, AgentRequest, AgentResponse } from '@agentuity/sdk';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
-import { WriterRequestSchema } from './types';
+import { WriterRequestSchema } from '../../lib/types';
 
 export default async function Agent(
   req: AgentRequest,
@@ -205,7 +205,7 @@ export const welcome = () => ({
 import type { AgentContext, AgentRequest, AgentResponse } from '@agentuity/sdk';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
-import { JudgmentSchema, JudgeRequestSchema } from './types';
+import { JudgmentSchema, JudgeRequestSchema } from '../../lib/types';
 
 export default async function Agent(
   req: AgentRequest,
@@ -252,7 +252,7 @@ export const welcome = () => ({
 
 ```typescript
 import type { AgentContext, AgentRequest, AgentResponse } from '@agentuity/sdk';
-import type { Judgment } from './types';
+import type { Judgment } from '../../lib/types';
 
 function formatReport(judgment: Judgment, storiesMarkdown: string): string {
   return `# Story Competition Results

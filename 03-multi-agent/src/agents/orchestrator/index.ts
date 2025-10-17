@@ -1,10 +1,8 @@
 import type { AgentContext, AgentRequest, AgentResponse } from '@agentuity/sdk';
-// TODO: Import the Judgment type from types.ts
-// Hint: Uncomment the line below and replace 'any' with 'Judgment' throughout this file
-// import type { Judgment } from '../../lib/types';
+import type { Judgment } from '../../lib/types';
 
 /* HELPER FUNCTION: Format Competition Report */
-function formatReport(judgment: any, storiesMarkdown: string): string {
+function formatReport(judgment: Judgment, storiesMarkdown: string): string {
   return `# Story Competition Results
 
 ## Competing Stories
@@ -34,9 +32,7 @@ export default async function Agent(
 ) {
   /* SECTION 1: Get Story Prompt */
 
-  // TODO: Extract the story prompt from the incoming request
-  // Hint: Parse the request data as text content
-  const prompt = '';
+  const prompt = await req.data.text();
 
   ctx.logger.info('Competition started', { prompt });
 
@@ -49,12 +45,9 @@ export default async function Agent(
   // TODO: Call the writer agent
   // Hint: Pass prompt as JSON data
   // Hint: Agent run method takes a data parameter
-  const storiesResponse = null;
+  const storiesResponse = null as any;
 
-  // TODO: Parse the response to get stories markdown
-  // Hint: Writer returns markdown text with both stories and headers
-  // Hint: Use the text parsing method on the response data
-  const stories = '';
+  const stories = await storiesResponse.data.text();
 
   ctx.logger.info('Stories generated');
 
@@ -67,22 +60,13 @@ export default async function Agent(
   // TODO: Call the judge agent with stories markdown
   // Hint: Pass the stories text and original prompt as JSON
   // Hint: Judge will extract individual stories from the markdown
-  const judgmentResponse = null;
+  const judgmentResponse = null as any;
 
-  // TODO: Parse the judgment response
-  // Hint: Judge returns Zod-validated JSON with winner, reasoning, and improvements
-  // Hint: Use the JSON parsing method on the response data
-  // Hint: Cast the result as Judgment type for TypeScript (uncomment import at top first)
-  const judgment: any = null;
+  const judgment = (await judgmentResponse.data.json()) as Judgment;
 
   /* SECTION 4: Return Final Report */
 
-  // TODO: Use the formatReport helper to create markdown
-  // Hint: Pass the judgment object and stories markdown
-  // TODO: Return the formatted report as markdown
-  // Hint: Use the markdown response method
-
-  return resp.text('Not implemented');
+  return resp.markdown(formatReport(judgment, stories));
 }
 
 export const welcome = () => ({

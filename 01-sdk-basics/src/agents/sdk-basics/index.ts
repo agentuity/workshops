@@ -34,7 +34,9 @@ export default async function Agent(
 
 ## Received Data
 
-TODO: Add received data in a code block
+\`\`\`json
+${JSON.stringify(receivedData, null, 2)}
+\`\`\`
 
 ## Request Info
 
@@ -52,6 +54,7 @@ TODO: Add metadata in a code block
   // TODO: Log that we're returning the response
 
   // TODO: Return the markdown response
+  return response.markdown(markdown);
 }
 
 export const welcome = () => ({

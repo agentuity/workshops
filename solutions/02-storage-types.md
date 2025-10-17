@@ -228,9 +228,8 @@ export default async function Agent(
 
     /* SECTION 5: KV Storage - Track Query History */
     const existingQueries = await ctx.kv.get(KV_STORAGE_NAME, 'query-history');
-
-    const queryHistory: QueryHistoryEntry[] = existingQueries.exists
-      ? await existingQueries.data.json()
+    const queryHistory = existingQueries.exists
+      ? ((await existingQueries.data.json()) as QueryHistoryEntry[])
       : [];
 
     queryHistory.push({
