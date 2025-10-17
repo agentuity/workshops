@@ -1,42 +1,48 @@
-// TODO: Import Zod library
-// Hint: Import z from the 'zod' package for schema validation
+import { z } from 'zod';
 
-/* SECTION 1: Judge Agent Schema (LLM Output Validation) */
-// This schema validates the judge's response when picking a winner
+/* Judge Agent Schema */
+// Validates the structured output from the judge's LLM evaluation
 
-/* TODO: Create JudgmentSchema using Zod
- * Hint: Use z.object() to define an object schema with these fields:
- * - winner: An enum of either 'openai' or 'google'
- * - winningStory: A string containing the full winning story text
- * - reasoning: A string explaining why this story won (2-3 sentences)
- * - improvements: A string with specific feedback to make the story even better
- */
+export const JudgmentSchema = z.object({
+  winner: z
+    .enum(['openai', 'google'])
+    .describe('Which model won the competition'),
+  winningStory: z.string().describe('The complete text of the winning story'),
+  reasoning: z
+    .string()
+    .describe(
+      'Why this story won - specific strengths that made it better (2-3 sentences)'
+    ),
+  improvements: z
+    .string()
+    .describe(
+      'Specific, actionable feedback to make the winning story even better (2-3 sentences)'
+    ),
+});
 
-// TODO: Export the schema so other files can use it
-// Hint: Export as a named constant
+// Use z.infer<> to automatically derive TypeScript types from Zod schemas
+// This means we define the structure once (in Zod) and get both:
+// - Runtime validation with .parse()
+// - Compile-time TypeScript types
+export type Judgment = z.infer<typeof JudgmentSchema>;
 
-// TODO: Export the TypeScript type for the schema
-// Hint: Use Zod's type inference to extract TypeScript types from your schema
+/* Writer Agent Schema */
+// Validates incoming requests from the orchestrator to the writer agent
 
-/* SECTION 2: Writer Agent Schema (Agent Boundary Validation) */
-// This schema validates incoming requests to the writer agent
+export const WriterRequestSchema = z.object({
+  prompt: z.string().describe('The story prompt from the user'),
+});
 
-// TODO: Create WriterRequestSchema using Zod
-// Hint: Use z.object() with this field:
-// - prompt: A string with the user's story prompt
+export type WriterRequest = z.infer<typeof WriterRequestSchema>;
 
-// TODO: Export the schema
+/* Judge Agent Schema */
+// Validates incoming requests from the orchestrator to the judge agent
 
-// TODO: Export the TypeScript type for WriterRequest
+export const JudgeRequestSchema = z.object({
+  stories: z
+    .string()
+    .describe('Markdown text containing both stories with headers'),
+  prompt: z.string().describe('The original story prompt from the user'),
+});
 
-/* SECTION 3: Judge Agent Schema (Agent Boundary Validation) */
-// This schema validates incoming requests to the judge agent
-
-// TODO: Create JudgeRequestSchema using Zod
-// Hint: Use z.object() with these fields:
-// - stories: A string containing markdown text with both stories
-// - prompt: A string with the original user prompt
-
-// TODO: Export the schema
-
-// TODO: Export the TypeScript type for JudgeRequest
+export type JudgeRequest = z.infer<typeof JudgeRequestSchema>;

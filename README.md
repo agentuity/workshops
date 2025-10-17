@@ -2,7 +2,13 @@
 
 ## Overview
 
-This workshop teaches you how to build AI agents using the Agentuity platform through three progressive, hands-on demos. You'll start with SDK fundamentals, move through storage and data persistence, and finish with multi-agent orchestration patterns.
+Build AI agents using the Agentuity platform through three progressive demos. Start with SDK fundamentals, work through storage and data persistence, and finish with multi-agent orchestration.
+
+## Workshop vs Self-Paced
+
+**During the workshop**: Follow along with the live coding demo, ask questions, and see patterns in action.
+
+**Self-paced**: Clone the repo, work through the TODOs in each demo, and reference the [`solutions/`](./solutions/) folder when needed.
 
 ## Workshop Structure
 
@@ -38,30 +44,25 @@ Master multi-agent orchestration, AI Gateway integration, and structured output 
 
 ## Prerequisites
 
-Before the workshop, ensure you have:
+- **[Bun](https://bun.sh/docs/installation)** 1.2.4 or higher
+- **Agentuity CLI and account** - See the [getting started guide](https://agentuity.dev/Introduction/getting-started)
 
-- **[Bun](https://bun.sh/docs/installation)**: Version 1.2.4 or higher
-- **Agentuity CLI and account**: See our [getting started guide](https://agentuity.dev/Introduction/getting-started) for more info.
-
-**Note**: This workshop uses TypeScript with Bun as the runtime.
+This workshop uses TypeScript with Bun as the runtime.
 
 ## Getting Started
 
-### Before the Workshop
+**Workshop attendees**: No setup required - just follow along and ask questions.
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/agentuity/workshops.git
-   cd workshops
-   ```
+**Self-paced**:
 
-2. Each demo is a standalone project. Navigate to any demo and install dependencies:
-   ```bash
-   cd 01-sdk-basics
-   bun install
-   ```
+```bash
+git clone https://github.com/agentuity/workshops.git
+cd workshops/01-sdk-basics
+bun install
+agentuity dev
+```
 
-During the workshop, we'll work through each demo together, filling in TODOs and testing as we go. Complete solution code will be added to this repository after the workshop.
+Open the agent file and follow the TODOs. Check [`solutions/`](./solutions/) when needed.
 
 ## Resources
 
@@ -71,6 +72,4 @@ During the workshop, we'll work through each demo together, filling in TODOs and
 
 ## Next Steps
 
-Want to explore more Agentuity features interactively? Check out the **[Kitchen Sink project](https://github.com/agentuity/kitchen-sink-ts)** — an interactive playground where you can try out every SDK feature through live, working agents. It's a great way to experiment and see additional patterns in action.
-
-**Watch the [Kitchen Sink walkthrough video](https://youtu.be/gcxqdMWY-x4)** for a guided tour of key features.
+Check out the **[Kitchen Sink project](https://github.com/agentuity/kitchen-sink-ts)** for an interactive playground covering every SDK feature. Watch the [walkthrough video](https://youtu.be/gcxqdMWY-x4) for a guided tour.

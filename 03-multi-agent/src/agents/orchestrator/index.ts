@@ -1,5 +1,6 @@
 import type { AgentContext, AgentRequest, AgentResponse } from '@agentuity/sdk';
-// TODO: Once you've completed types.ts, uncomment the line below and replace 'any' with 'Judgment' throughout this file
+// TODO: Import the Judgment type from types.ts
+// Hint: Uncomment the line below and replace 'any' with 'Judgment' throughout this file
 // import type { Judgment } from '../../lib/types';
 
 /* HELPER FUNCTION: Format Competition Report */
